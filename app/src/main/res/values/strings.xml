@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MusicPlayerApp</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="notification_channel">APP_Channel_ID</string>
+    <string name="notification_channel_description">Channel ID for APP</string>
+
+
+</resources>

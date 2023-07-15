@@ -1,0 +1,87 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
+}
+
+android {
+    namespace 'com.example.musicplayerapp'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.example.musicplayerapp"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+
+    implementation Dependencies.INSTANCE.coreKtx_dep
+    implementation Dependencies.INSTANCE.appCompate_dep
+    implementation Dependencies.INSTANCE.material_dep
+    implementation Dependencies.INSTANCE.constraint_layout_dep
+
+    // Kotlin
+    implementation Dependencies.INSTANCE.navigation_fragment_ktx_dep
+    implementation  Dependencies.INSTANCE.navigation_ui_ktx_dep
+    implementation Dependencies.INSTANCE.dagger_hilt_dep
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    kapt Dependencies.INSTANCE.dagger_hilt_kapt
+
+    //Gson
+    implementation Dependencies.INSTANCE.gson_dep
+
+    implementation Dependencies.INSTANCE.datastore_preference_dep
+    implementation Dependencies.INSTANCE.viewpager2_dep
+
+    implementation Dependencies.INSTANCE.room_dep
+    implementation Dependencies.INSTANCE.room_ktx_dep
+    annotationProcessor Dependencies.INSTANCE.room_annotation_dep
+    // To use Kotlin annotation processing tool (kapt)
+    kapt Dependencies.INSTANCE.room_kapt_dep
+    // Firebase Firestore
+    implementation 'com.google.firebase:firebase-firestore:24.7.0'
+
+    // Firebase Storage KTX
+    implementation 'com.google.firebase:firebase-storage-ktx:20.2.1'
+
+    // Firebase Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
+
+    // ExoPlayer
+    def media3_version = "1.1.0"
+
+    // For media playback using ExoPlayer
+    implementation("androidx.media3:media3-exoplayer:$media3_version")
+
+    api project(path:':network')
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
