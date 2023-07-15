@@ -6,7 +6,7 @@ import androidx.media3.common.MediaItem
 /**
  * To make an interaction between [SongPlayerService] & [BaseSongPlayerActivity]
  *
- * @author ZARA
+ * @author AMIT
  * */
 interface OnPlayerServiceCallback {
     fun updateSongData(mediaItem: MediaItem)
