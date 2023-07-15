@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
                     val albumArtUri = ContentUris.withAppendedId(songCover,it.getLong(albumId))
                     val path = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,id)
                     songs.add(Song(
-                        id = id,
+                        id = id.toString(),
                         songName = songName,
                         albumName = albumName,
                         duration = duration,
