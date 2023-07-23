@@ -12,12 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
+        android:background="@color/black"
         tools:context=".presentation.MainActivity"
         tools:openDrawer="start">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/black">
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
@@ -27,7 +29,6 @@
                 app:title="Music Player"
                 app:titleTextColor="@color/white"
                 android:textSize="16sp"
-                android:background="@color/pink"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -46,8 +47,10 @@
                     android:layout_height="match_parent"
                     android:drawableTop="@drawable/shuffle"
                     android:text="Shuffle"
+                    android:drawableTint="@color/white"
+                    android:textColor="@color/white"
+
                     android:textAllCaps="false"
-                    android:textColor="@color/black"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toStartOf="@id/playlist_btn"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -58,9 +61,10 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:drawableTop="@drawable/music_icon"
+                    android:drawableTint="@color/white"
                     android:text="PlayList"
                     android:textAllCaps="false"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toStartOf="@id/favorite_btn"
                     app:layout_constraintStart_toEndOf="@id/shuffle_btn" />
@@ -72,8 +76,9 @@
                     android:layout_height="match_parent"
                     android:drawableTop="@drawable/favorite_icon"
                     android:text="Favorite"
+                    android:drawableTint="@color/white"
+                    android:textColor="@color/white"
                     android:textAllCaps="false"
-                    android:textColor="@color/black"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/playlist_btn" />
@@ -109,6 +114,7 @@
         <com.google.android.material.navigation.NavigationView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:id="@+id/nav_view"
             android:layout_gravity="start"
             app:headerLayout="@layout/nav_header"
             app:menu="@menu/nav_menu"

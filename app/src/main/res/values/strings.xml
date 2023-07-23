@@ -4,6 +4,10 @@
     <string name="close">Close</string>
     <string name="notification_channel">APP_Channel_ID</string>
     <string name="notification_channel_description">Channel ID for APP</string>
+    <string name="feedback">Feedback</string>
+    <string name="about">About</string>
+    <string name="setting">Setting</string>
+    <string name="exit">Exit</string>
 
 
 </resources>

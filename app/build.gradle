@@ -72,14 +72,9 @@ dependencies {
 
     // Firebase Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
-
-    // ExoPlayer
-    def media3_version = "1.1.0"
-
-    // For media playback using ExoPlayer
-    implementation("androidx.media3:media3-exoplayer:$media3_version")
-
     api project(path:':network')
+    api project(path: ':dbmodule')
+    api project(path:':musiccore')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

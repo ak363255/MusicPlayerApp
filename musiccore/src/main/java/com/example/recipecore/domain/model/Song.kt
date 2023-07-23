@@ -1,5 +1,6 @@
 package com.example.musicplayerapp.domain.model
 
+import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.core.net.toUri
@@ -15,31 +16,28 @@ data class Song(
     val duration:Int?,
     var path: String?,
     val albumArt:String?
-):Parcelable{
+    ):Parcelable{
 
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readValue(Int::class.java.classLoader) as? Int?,
         parcel.readString(),
-        parcel.readString()
+        parcel.readString(),
     ) {
     }
 
+
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeValue(id)
+        parcel.writeString(id)
         parcel.writeString(songName)
         parcel.writeString(albumName)
         parcel.writeValue(duration)
         parcel.writeString(path)
         parcel.writeString(albumArt)
     }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
     companion object CREATOR : Parcelable.Creator<Song> {
         override fun createFromParcel(parcel: Parcel): Song {
             return Song(parcel)
@@ -49,17 +47,34 @@ data class Song(
             return arrayOfNulls(size)
         }
 
-        fun Song.createMediaItem() = MediaItem.Builder().setMediaId(this.id?.toString()?:"")
-            .setUri(File(path).toUri())
-            .setMimeType(MimeTypes.AUDIO_MPEG)
-            .setMediaMetadata(
-                MediaMetadata.Builder()
-                    .setAlbumTitle(songName)
-                    .setAlbumArtist(albumName)
-                    .setArtworkUri(File(albumArt ?: "").toUri())
-                    .build()
-            ).build()
+        fun Song.createMediaItem():MediaItem {
+            val song = this
+            val bundle = Bundle()
+            bundle.putParcelable("song",song)
+            return MediaItem.Builder().setMediaId(
+                this.id?:"")
+                .setUri(File(path).toUri())
+                .setMimeType(MimeTypes.AUDIO_MPEG)
+                .setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setAlbumTitle(songName)
+                        .setAlbumArtist(albumName)
+                        .setArtworkUri(File(albumArt ?: "").toUri())
+                        .setExtras(bundle)
+                        .build()
+                ).build()
+        }
+        fun MediaItem.toSong():Song?{
+            val bundle = this.mediaMetadata.extras
+            val song = bundle?.getParcelable("song") as Song ?
+            return song
+        }
     }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
 
 
 }

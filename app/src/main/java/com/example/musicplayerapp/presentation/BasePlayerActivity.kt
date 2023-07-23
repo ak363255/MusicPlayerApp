@@ -10,6 +10,7 @@ import android.os.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
 import com.example.musicplayerapp.domain.Utility.orFalse
+import com.example.musicplayerapp.domain.model.Song
 import com.example.musicplayerapp.presentation.SongPlayerViewModel.Companion.getPlayerViewModelInstance
 
 open class BasePlayerActivity : AppCompatActivity(),OnPlayerServiceCallback {
@@ -35,6 +36,9 @@ open class BasePlayerActivity : AppCompatActivity(),OnPlayerServiceCallback {
         }
     }
 
+    fun addToFavoriteSong(song: Song?) = songPlayerViewModel.addFavoriteSong(song)
+    fun removeFavoriteSong(id:String?) = songPlayerViewModel.removeFavoriteSong(id)
+    fun isFavoriteSong(id:String?) = songPlayerViewModel.isFavoriteSong(id)
 
     private val mConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -71,7 +75,7 @@ open class BasePlayerActivity : AppCompatActivity(),OnPlayerServiceCallback {
     }
     private fun bindPlayerService() {
         if (!mBound) bindService(
-            Intent(this, PlayerService::class.java),
+            Intent(this@BasePlayerActivity, PlayerService::class.java),
             mConnection, Context.BIND_AUTO_CREATE
         )
     }
@@ -106,6 +110,10 @@ open class BasePlayerActivity : AppCompatActivity(),OnPlayerServiceCallback {
         }
     }
 
+    fun loadSongsFromExternalStroage(){
+        songPlayerViewModel.loadSongsFromExternalStorageStorage(contentResolver)
+    }
+
     fun shuffle() {
         mService?.onShuffle(songPlayerViewModel.isShuffleData.value.orFalse())
         songPlayerViewModel.shuffle()
@@ -130,7 +138,13 @@ open class BasePlayerActivity : AppCompatActivity(),OnPlayerServiceCallback {
 
     override fun updateUiForPlayingMediaItem(mediaItem: MediaItem?) {
         songPlayerViewModel.updateMediaItem(mediaItem)
+
     }
+
+    override fun currentMedaiItemIndex(pos: Int) {
+        songPlayerViewModel.updateCurrentMediaIndex(pos)
+    }
+
     private fun unbindService() {
         if (mBound) {
             unbindService(mConnection)

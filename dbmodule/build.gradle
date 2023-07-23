@@ -1,0 +1,62 @@
+plugins {
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id ("com.google.dagger.hilt.android")
+
+}
+
+android {
+    namespace = "com.example.dbmodule"
+    compileSdk = 33
+
+    defaultConfig {
+        minSdk = 24
+        targetSdk = 33
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+        }
+
+        debug{
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+dependencies {
+
+    implementation Dependencies.INSTANCE.coreKtx_dep
+    implementation Dependencies.INSTANCE.appCompate_dep
+    implementation Dependencies.INSTANCE.material_dep
+    implementation Dependencies.INSTANCE.constraint_layout_dep
+
+    implementation Dependencies.INSTANCE.dagger_hilt_dep
+    kapt Dependencies.INSTANCE.dagger_hilt_kapt
+
+
+    implementation Dependencies.INSTANCE.room_dep
+    implementation Dependencies.INSTANCE.room_ktx_dep
+    annotationProcessor Dependencies.INSTANCE.room_annotation_dep
+    // To use Kotlin annotation processing tool (kapt)
+    kapt Dependencies.INSTANCE.room_kapt_dep
+
+    api project(path:':musiccore')
+    api project(path:':network')
+
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+}

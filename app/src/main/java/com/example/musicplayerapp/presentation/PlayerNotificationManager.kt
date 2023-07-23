@@ -9,17 +9,19 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.view.View
 import android.widget.RemoteViews
-import android.widget.RemoteViews.RemoteView
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.app.ServiceCompat.stopForeground
-import androidx.core.content.getSystemService
+import androidx.core.content.ContextCompat.registerReceiver
 import androidx.media3.common.MediaItem
 import com.example.musicplayerapp.R
+import com.example.musicplayerapp.domain.model.Song.CREATOR.toSong
 import java.io.File
+
 
 class PlayerNotificationManager constructor(private val mService: PlayerService):BroadcastReceiver(){
 
@@ -76,7 +78,7 @@ class PlayerNotificationManager constructor(private val mService: PlayerService)
         mService.registerReceiver(this,filter)
         if(!mStarted){
             mStarted = true
-            mService?.startForeground(NOTIFICATION_ID,generateNotification())
+            mService.startForeground(NOTIFICATION_ID,generateNotification())
         }
     }
 
@@ -99,14 +101,19 @@ class PlayerNotificationManager constructor(private val mService: PlayerService)
         }
 
         mRemoteViews = RemoteViews(getPackageName(),R.layout.player_notification_view)
+         mRemoteViews?.setOnClickPendingIntent(R.id.expanded_notification_skip_back_image_view,mPreviousIntent)
+         mRemoteViews?.setOnClickPendingIntent(R.id.expanded_notification_skip_next_image_view,mNextIntent)
+         mRemoteViews?.setOnClickPendingIntent(R.id.expanded_notification_pause_image_view,mPauseIntent)
+         mRemoteViews?.setOnClickPendingIntent(R.id.expanded_notification_play_image_view,mPlayIntent)
        notificaionBuilder?.setCustomContentView(mRemoteViews)
         notificaionBuilder?.setOngoing(true)
         mRemoteViews?.let {
             createRemoteViews(it)
         }
 
-        mService?.getCurrentMediaItem()?.mediaMetadata?.artworkUri?.let {
-            val bitmap = BitmapFactory.decodeFile(File(it.path.toString()).path)
+        mService.getCurrentMediaItem()?.toSong()?.albumArt?.let {
+          //  val bitmap = BitmapFactory.decodeFile(File(it).path)
+            val bitmap = MediaStore.Images.Media.getBitmap(mService.contentResolver, Uri.parse(it))
             mRemoteViews?.setImageViewBitmap(R.id.notification_image_view,bitmap)
         }?:{
             val bitmap = BitmapFactory.decodeResource(mService.resources,R.drawable.music_icon)

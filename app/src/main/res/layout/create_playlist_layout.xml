@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/play_list_name_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            app:boxStrokeColor="@color/pink"
+            app:boxStrokeWidth="2dp"
+            app:startIconDrawable="@drawable/music_icon"
+            app:startIconTint="@color/pink"
+            android:hint="PlayList Name"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/playlist_edit_text"
+                android:maxLines="1"
+                android:ellipsize="end" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/craeted_by_layout"
+            app:layout_constraintTop_toBottomOf="@id/play_list_name_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            app:boxStrokeColor="@color/pink"
+            app:boxStrokeWidth="2dp"
+            app:startIconDrawable="@drawable/music_icon"
+            app:startIconTint="@color/pink"
+            android:hint="Created By"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/created_by_edittext"
+                android:maxLines="1"
+                android:ellipsize="end" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

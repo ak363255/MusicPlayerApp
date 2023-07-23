@@ -1,6 +1,8 @@
 package com.example.musicplayerapp
 
 import android.app.Application
+import com.example.dbmodule.MusicDbHelper
+import com.example.dbmodule.MusicRoomDb
 import com.example.network.NetworkHelper
 import com.example.network.RetrofitClient
 import dagger.hilt.android.HiltAndroidApp
@@ -11,11 +13,19 @@ class MusicPlayerApplication:Application() {
     @Inject
     lateinit var retrofitClient: RetrofitClient
 
+    @Inject
+    lateinit var musicRoomDb:MusicRoomDb
+
 
     override fun onCreate() {
         super.onCreate()
         applicationContext_ = this
         initializeRetrofit()
+        initializeMusicDb()
+    }
+
+    private fun initializeMusicDb() {
+         MusicDbHelper.musicDb = musicRoomDb
     }
 
 

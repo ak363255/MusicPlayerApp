@@ -3,12 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:background="@color/black">
 
     <ImageView
         android:id="@+id/notification_image_view"
         android:layout_width="110dp"
         android:layout_height="110dp"
+        android:src="@drawable/music_icon"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:adjustViewBounds="true"
@@ -21,7 +24,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        app:tint="@color/white" />
 
     <TextView
         android:id="@+id/expanded_notification_song_name_text_view"
@@ -30,10 +34,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        tools:text="Alan Walker"
         android:layout_toEndOf="@id/notification_image_view"
         android:layout_toRightOf="@id/notification_image_view"
-        android:textAlignment="center"
-        android:textColor="@color/black"
+        android:textAlignment="textStart"
+        android:textColor="@color/white"
         android:textSize="12sp" />
 
     <TextView
@@ -43,10 +48,11 @@
         android:layout_below="@+id/expanded_notification_song_name_text_view"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        tools:text="Taylor Swift"
         android:layout_toEndOf="@id/notification_image_view"
         android:layout_toRightOf="@id/notification_image_view"
-        android:textAlignment="center"
-        android:textColor="@color/black"
+        android:textAlignment="textStart"
+        android:textColor="@color/white"
         android:textSize="14sp" />
 
 
@@ -69,8 +75,9 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/pause"
-            android:visibility="invisible" />
+            android:src="@drawable/pause_white"
+            app:tint = "@color/white"
+            android:visibility="visible" />
 
         <ImageView
             android:id="@+id/expanded_notification_play_image_view"
@@ -79,7 +86,9 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/play_icon" />
+            tools:visibility="gone"
+            app:tint = "@color/white"
+            android:src="@drawable/play_white_icon" />
 
         <ImageView
             android:id="@+id/expanded_notification_skip_back_image_view"
@@ -88,9 +97,10 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_marginTop="8dp"
-            android:padding="8dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/prev_icon" />
+            tools:visibility="visible"
+            app:tint = "@color/white"
+            android:src="@drawable/prev_icon_white" />
 
 
         <ImageView
@@ -101,9 +111,9 @@
             android:layout_alignParentRight="true"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
-            android:padding="8dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/next" />
+            tools:visibility="visible"
+            android:src="@drawable/arrow_forward_white" />
 
 
     </RelativeLayout>

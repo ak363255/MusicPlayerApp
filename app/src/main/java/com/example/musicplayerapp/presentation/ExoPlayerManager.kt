@@ -37,7 +37,7 @@ class ExoPlayerManager(
                         action = PlayerService.ACTION_CMD
                         putExtra(PlayerService.CMD_NAME,PlayerService.CMD_PAUSE)
                     }
-                    context?.applicationContext?.startService(i)
+                    //context?.applicationContext?.startService(i)
                 }
             }
         }
@@ -45,9 +45,11 @@ class ExoPlayerManager(
     }
     private val mUpdateProgressHandler = object :android.os.Handler(Looper.getMainLooper()){
         override fun handleMessage(msg: Message) {
-            val duration = player?.duration?:0
-            val position = player?.currentPosition?:0
-            callback.onUpdateProgress(duration,position)
+            if(player?.isPlaying == true){
+                val duration = player?.duration?:0
+                val position = player?.currentPosition?:0
+                callback.onUpdateProgress(duration,position)
+            }
             sendEmptyMessageDelayed(0, UPDATE_PROGRESS_DELAY)
         }
     }
@@ -153,7 +155,7 @@ class ExoPlayerManager(
     }
 
     fun toggle(){
-        if(player?.isPlaying == true)player?.pause() else player?.pause()
+        if(player?.isPlaying == true)player?.pause() else player?.play()
     }
     fun getCurrentMediaItem():MediaItem?{
         return player?.currentMediaItem
@@ -246,8 +248,8 @@ class ExoPlayerManager(
     fun play(mediaItem: MediaItem){
         mPlayOnFocusGain = true
         tryToGetAudioFocus()
-        registerAudioNoisyReceiver()
-        releaseResources(false)
+       // registerAudioNoisyReceiver()
+        //releaseResources(false)
         initializePlayer()
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(AUDIO_CONTENT_TYPE_MUSIC)
@@ -259,8 +261,9 @@ class ExoPlayerManager(
             it.setMediaItem(mediaItem)
             it.prepare()
             it.play()
+            currentItem = it.currentMediaItemIndex
         }
-        mWifiLock?.acquire()
+       // mWifiLock?.acquire()
         configurePlayerState()
     }
 

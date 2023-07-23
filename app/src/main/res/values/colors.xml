@@ -13,4 +13,9 @@
     <color name="pink">#F50057</color>
     <color name="yellow">#FFD600</color>
     <color name="red">#EF1B0B</color>
+    <color name="ads_303030">#303030</color>
+    <color name="ads_606060">#606060</color>
+    <color name="ads_d7d7d7">#d7d7d7</color>
+    <color name="ads_e8e8e8">#e8e8e8</color>
+    <color name="ads_5C5F61">#5C5F61</color>
 </resources>

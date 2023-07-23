@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -25,6 +26,14 @@ class PlayerService : Service(),OnExoPlayerManagerCallback {
         mNotificationManager?.createMediaNotification()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    private fun unRegisterNotificationReceiver() {
+        unregisterReceiver(mNotificationManager)
+    }
+
 
     inner class LocalBinder : Binder() {
         // Return this instance of PlayerService so clients can call public methods
@@ -35,10 +44,10 @@ class PlayerService : Service(),OnExoPlayerManagerCallback {
         /* Binding to this service doesn't actually trigger onStartCommand(). That is needed to
         * ensure this Service can be promoted to a foreground service.
         * */
-        ContextCompat.startForegroundService(
+        /*ContextCompat.startForegroundService(
             applicationContext,
             Intent(this, PlayerService::class.java)
-        )
+        )*/
     }
 
     fun addListener(callback: OnPlayerServiceCallback) {
@@ -46,14 +55,15 @@ class PlayerService : Service(),OnExoPlayerManagerCallback {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("service","OnStartCommand Called")
         return START_NOT_STICKY
     }
     override fun onBind(intent: Intent?): IBinder? {
         val action = intent?.action
         command = intent?.getStringExtra(CMD_NAME)
-        if (ACTION_CMD == action && CMD_PAUSE == command) {
+      /*  if (ACTION_CMD == action && CMD_PAUSE == command) {
             exoPlayerManager?.pause()
-        }
+        }*/
         return binder
     }
     fun toggle() {
@@ -94,10 +104,12 @@ class PlayerService : Service(),OnExoPlayerManagerCallback {
         mCallback?.updateUiForPlayingMediaItem(mediaItem)
     }
 
+    override fun currentMediaIndex(pos:Int) {
+        mCallback?.currentMedaiItemIndex(pos)
+    }
+
     fun stop() {
         exoPlayerManager?.stop()
-        stopForeground(true)
-        stopSelf()
         mNotificationManager = null
     }
 

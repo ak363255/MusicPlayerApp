@@ -13,4 +13,6 @@ interface OnPlayerServiceCallback {
     fun updateSongProgress(duration: Long, position: Long)
     fun onIsPlayingChanged(isPlaying: Boolean)
     fun updateUiForPlayingMediaItem(mediaItem: MediaItem?)
+
+    fun currentMedaiItemIndex(pos:Int)
 }

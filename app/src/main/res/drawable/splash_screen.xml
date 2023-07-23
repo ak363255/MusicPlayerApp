@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:drawable="@color/white"/>
+        android:drawable="@drawable/rounded_corner_black_bg_4dp_white_stroke_1dp"/>
 <item
-    android:drawable="@drawable/music" android:gravity="center"
+    android:drawable="@drawable/music_icon" android:gravity="center"
     />
 </layer-list>

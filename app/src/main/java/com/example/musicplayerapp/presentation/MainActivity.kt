@@ -5,9 +5,9 @@ import android.content.ContentUris
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -23,12 +23,15 @@ import com.example.musicplayerapp.R
 import com.example.musicplayerapp.databinding.ActivityMainBinding
 import com.example.musicplayerapp.domain.Utility
 import com.example.musicplayerapp.domain.model.Song
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+
+class MainActivity : BasePlayerActivity() {
     lateinit var  binding:ActivityMainBinding
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
     private var musicAdapter:MusicAdapter? = null
@@ -36,7 +39,6 @@ class MainActivity : AppCompatActivity() {
     private var readPermissionGranted:Boolean = false
     private var writePermissionGranted:Boolean = false
     private lateinit var permissionLauncher:ActivityResultLauncher<Array<String>>
-    private val songListUpdatedLiveData:MutableLiveData<MutableList<Song>> = MutableLiveData()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
@@ -48,39 +50,42 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hasReadPermission() {
-        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){permissions ->
-            readPermissionGranted = permissions[Manifest.permission.READ_EXTERNAL_STORAGE]?:readPermissionGranted
-            writePermissionGranted = permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE]?:writePermissionGranted
-            if(readPermissionGranted){
-                loadAudioFromExternalStorage()
-            }else{
-                Toast.makeText(this,"Read Permission Required",Toast.LENGTH_LONG).show()
-            }
+          permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){permissions ->
+              readPermissionGranted = Utility.sdk29AndUp {
+                  permissions[Manifest.permission.READ_MEDIA_AUDIO]?:false
+              }?:permissions[Manifest.permission.READ_EXTERNAL_STORAGE]?:false
+              if(readPermissionGranted){
+                  loadAudioFromExternalStorage()
+              }else{
+                  Toast.makeText(this,"Read Permission Required",Toast.LENGTH_LONG).show()
+              }
 
-        }
-        updateOrRequestPermissions()
+          }
+          updateOrRequestPermissions()
+
     }
 
     private fun updateOrRequestPermissions() {
-        val hasReadPermission = ContextCompat.checkSelfPermission(
+       readPermissionGranted =
+           Utility.sdk29AndUp {
+               ContextCompat.checkSelfPermission(
+                   this,
+                   Manifest.permission.READ_MEDIA_AUDIO
+               ) == PackageManager.PERMISSION_GRANTED
+           }?:ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.READ_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
-        val hasWritePermission = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
-        val minSdk29 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-
-        readPermissionGranted = hasReadPermission
-        writePermissionGranted = hasWritePermission || minSdk29
 
         val permissionsToRequest = mutableListOf<String>()
-        if(!writePermissionGranted) {
-            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
+
         if(!readPermissionGranted) {
-            permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+            permissionsToRequest.add(
+                Utility.sdk29AndUp {
+               Manifest.permission.READ_MEDIA_AUDIO
+            }?:Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+
         }
         if(permissionsToRequest.isNotEmpty()) {
             permissionLauncher.launch(permissionsToRequest.toTypedArray())
@@ -91,48 +96,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private  fun loadAudioFromExternalStorage() {
-        CoroutineScope(Dispatchers.IO + Job()).launch {
-            val collection = Utility.sdk29AndUp {
-                MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-            }?: MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-
-
-            val projection = arrayOf(
-                MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.DURATION,
-                MediaStore.Audio.Media.ALBUM,
-                MediaStore.Audio.Media.ALBUM_ID
-            )
-
-            contentResolver?.query(collection,projection,null,null,null,null)?.use {
-                val idColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
-                val dispalyName = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
-                val duration = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
-                val album = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)
-                val albumId = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
-                val songs = mutableListOf<Song>()
-                while(it.moveToNext()){
-                    val id = it.getLong(idColumn)
-                    val songName = it.getString(dispalyName)
-                    val duration = it.getInt(duration)
-                    val albumName = it.getString(album)
-                    val songCover: Uri = Uri.parse("content://media/external/audio/albumart")
-                    val albumArtUri = ContentUris.withAppendedId(songCover,it.getLong(albumId))
-                    val path = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,id)
-                    songs.add(Song(
-                        id = id.toString(),
-                        songName = songName,
-                        albumName = albumName,
-                        duration = duration,
-                        path = path.toString(),
-                        albumArt = albumArtUri.toString()
-                    ))
-
-                }
-                songListUpdatedLiveData.postValue(songs)
-            }
-        }
+        songPlayerViewModel.loadSongsFromExternalStorageStorage(contentResolver)
     }
 
     private fun setDrawer() {
@@ -157,12 +121,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeChanges() {
-        songListUpdatedLiveData.observe(this){
+        songPlayerViewModel.songList.observe(this){
             if(it.size>0){
-                musicAdapter?.updateList(it)
+                musicAdapter?.updateList(it.toMutableList())
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
+
 
     private fun setMusicRecyclerView() {
         musicAdapter = MusicAdapter{
@@ -174,9 +148,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun openPlayerActivity(it: Song) {
-        val playerIntent = Intent(this,PlayerActivity::class.java)
-        startActivity(playerIntent)
+    private fun openPlayerActivity(song: Song) {
+            songPlayerViewModel.songList.value?.let {
+                val songList = ArrayList<Song>()
+                it.forEach {
+                    songList.add(it)
+                }
+                PlayerActivity.start(this,song,songList)
+            }
     }
 
     private fun getDummySongs():List<String>{
@@ -197,6 +176,28 @@ class MainActivity : AppCompatActivity() {
         binding.shuffleBtn.setOnClickListener {
             onShuffleBtnClicked()
         }
+        binding.navView.setNavigationItemSelectedListener{
+            when(it.itemId){
+                R.id.exit ->{
+                    showExitDialog()
+                    return@setNavigationItemSelectedListener  true
+                }
+            }
+            false
+        }
+    }
+
+
+    private fun showExitDialog() {
+        val builder = MaterialAlertDialogBuilder(this)
+        builder.setTitle("Exit")
+             .setMessage("Do You want to Close App ?")
+               .setPositiveButton("Yes"){_,_ ->
+                  finishAffinity()
+               }
+            .setNegativeButton("No"){dialog,_ ->
+                 dialog?.dismiss()
+            }.create().show()
     }
 
     private fun openFavoriteActivity(){
@@ -209,8 +210,27 @@ class MainActivity : AppCompatActivity() {
         startActivity(playListIntent)
     }
     private fun onShuffleBtnClicked(){
-
+        val songList = songPlayerViewModel.songList.value
+        songList?.let {
+            if(it.size > 0){
+                it.toMutableList().shuffle()
+                openPlayerActivity(it[0])
+            }
+        }
     }
+
+    val navigationItemClickListener =
+        NavigationView.OnNavigationItemSelectedListener { item ->
+            when(item.itemId){
+                R.id.exit ->{
+                    showExitDialog()
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+        }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(actionBarDrawerToggle.onOptionsItemSelected(item)){
