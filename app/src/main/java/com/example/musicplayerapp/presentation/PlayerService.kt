@@ -122,10 +122,12 @@ class PlayerService : Service(),OnExoPlayerManagerCallback {
     }
 
     fun pause() {
+        mNotificationManager?.setCancelable(true)
         exoPlayerManager?.pause()
     }
 
     fun play() {
+        mNotificationManager?.setCancelable(false)
         exoPlayerManager?.play()
     }
 

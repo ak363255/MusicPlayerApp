@@ -10,6 +10,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.musicplayerapp.R
 import com.example.musicplayerapp.databinding.PlayListDetailFragmentBinding
+import com.example.musicplayerapp.domain.model.Song
 import com.example.recipecore.domain.model.PlayListModel
 import com.example.recipecore.domain.utils.addClickSpan
 
@@ -54,9 +55,16 @@ class PlayListDetailFragment : Fragment(R.layout.play_list_detail_fragment) {
     }
 
     private fun setPlayListRv() {
-        playListDetailSongsAdapter = PlayListSongAdapter {
+        playListDetailSongsAdapter = PlayListSongAdapter(object :PlayListSongAdapter.ItemClickedCallback{
+            override fun menuClicked(song: Song) {
 
-        }
+            }
+
+            override fun itemClicked(song: Song) {
+
+            }
+
+        })
         playListDetailFragmentBinding?.playListRv?.apply {
             adapter = playListDetailSongsAdapter
             layoutManager =

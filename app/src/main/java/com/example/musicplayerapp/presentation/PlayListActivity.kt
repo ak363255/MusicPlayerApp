@@ -35,6 +35,7 @@ class PlayListActivity : BasePlayerActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_play_list)
         setContentView(binding.root)
+        hideToolbar()
         loadSongsFromExternalStroage()
         initUi()
     }

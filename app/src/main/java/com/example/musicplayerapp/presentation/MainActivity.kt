@@ -1,39 +1,24 @@
 package com.example.musicplayerapp.presentation
 
 import android.Manifest
-import android.content.ContentUris
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
-import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.musicplayerapp.R
 import com.example.musicplayerapp.databinding.ActivityMainBinding
 import com.example.musicplayerapp.domain.Utility
 import com.example.musicplayerapp.domain.model.Song
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 
-class MainActivity : BasePlayerActivity() {
+class MainActivity :  BasePlayerActivity() {
     lateinit var  binding:ActivityMainBinding
-    lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
     private var musicAdapter:MusicAdapter? = null
     private   val READ_EXTERNAL_STORAGE_ID = 100
     private var readPermissionGranted:Boolean = false
@@ -44,7 +29,7 @@ class MainActivity : BasePlayerActivity() {
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
         setContentView(binding.root)
         hasReadPermission()
-        setDrawer()
+       // setDrawer()
         initUi()
 
     }
@@ -99,21 +84,6 @@ class MainActivity : BasePlayerActivity() {
         songPlayerViewModel.loadSongsFromExternalStorageStorage(contentResolver)
     }
 
-    private fun setDrawer() {
-        setSupportActionBar(binding.toolBar)
-        actionBarDrawerToggle =object: ActionBarDrawerToggle(this,binding.drawerLayout,R.string.open,R.string.close){
-            override fun onDrawerClosed(drawerView: View) {
-            }
-
-            override fun onDrawerOpened(drawerView: View) {
-            }
-        }
-        actionBarDrawerToggle.drawerArrowDrawable.color = ContextCompat.getColor(this,R.color.white)
-        binding.drawerLayout.addDrawerListener(actionBarDrawerToggle)
-        actionBarDrawerToggle.syncState()
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
     private fun initUi() {
         setClickListeners()
         setMusicRecyclerView()
@@ -122,10 +92,15 @@ class MainActivity : BasePlayerActivity() {
 
     private fun observeChanges() {
         songPlayerViewModel.songList.observe(this){
+            initLocalUi(it)
             if(it.size>0){
                 musicAdapter?.updateList(it.toMutableList())
             }
         }
+    }
+
+    private fun initLocalUi(songs: List<Song>) {
+        binding.totalSongsTv.text = "Total Songs (${songs.size})"
     }
 
     override fun onResume() {
@@ -158,14 +133,6 @@ class MainActivity : BasePlayerActivity() {
             }
     }
 
-    private fun getDummySongs():List<String>{
-        val list = mutableListOf<String>()
-        for(i in 0..10){
-             list.add("$i")
-        }
-        return list
-    }
-
     private fun setClickListeners() {
         binding.favoriteBtn.setOnClickListener {
             openFavoriteActivity()
@@ -176,7 +143,7 @@ class MainActivity : BasePlayerActivity() {
         binding.shuffleBtn.setOnClickListener {
             onShuffleBtnClicked()
         }
-        binding.navView.setNavigationItemSelectedListener{
+     /*   binding.navView.setNavigationItemSelectedListener{
             when(it.itemId){
                 R.id.exit ->{
                     showExitDialog()
@@ -184,7 +151,7 @@ class MainActivity : BasePlayerActivity() {
                 }
             }
             false
-        }
+        }*/
     }
 
 
@@ -218,25 +185,5 @@ class MainActivity : BasePlayerActivity() {
                 openPlayerActivity(it[0])
             }
         }
-    }
-
-    val navigationItemClickListener =
-        NavigationView.OnNavigationItemSelectedListener { item ->
-            when(item.itemId){
-                R.id.exit ->{
-                    showExitDialog()
-                    true
-                }
-                else -> {
-                    false
-                }
-            }
-        }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(actionBarDrawerToggle.onOptionsItemSelected(item)){
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

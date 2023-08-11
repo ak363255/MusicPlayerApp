@@ -95,9 +95,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
             android:layout_marginTop="8dp"
             android:scaleType="fitCenter"
+            android:layout_marginStart="32dp"
             tools:visibility="visible"
             app:tint = "@color/white"
             android:src="@drawable/prev_icon_white" />
@@ -110,6 +110,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_gravity="center"
+            android:layout_marginEnd="32dp"
             android:layout_marginTop="8dp"
             android:scaleType="fitCenter"
             tools:visibility="visible"

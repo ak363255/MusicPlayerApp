@@ -7,8 +7,15 @@ import android.content.ServiceConnection
 import android.media.session.PlaybackState.ACTION_PAUSE
 import android.media.session.PlaybackState.ACTION_STOP
 import android.os.*
+import android.view.MenuItem
+import android.view.View
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.media3.common.MediaItem
+import com.example.musicplayerapp.R
+import com.example.musicplayerapp.databinding.ActivityBaseBinding
 import com.example.musicplayerapp.domain.Utility.orFalse
 import com.example.musicplayerapp.domain.model.Song
 import com.example.musicplayerapp.presentation.SongPlayerViewModel.Companion.getPlayerViewModelInstance
@@ -22,6 +29,8 @@ open class BasePlayerActivity : AppCompatActivity(),OnPlayerServiceCallback {
     private var mMediaItems: ArrayList<MediaItem>? = null
     private var msg = 0
     val songPlayerViewModel: SongPlayerViewModel = getPlayerViewModelInstance()
+    var activityBaseBinding:ActivityBaseBinding? = null
+    lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
 
     private val mHandler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
@@ -34,6 +43,39 @@ open class BasePlayerActivity : AppCompatActivity(),OnPlayerServiceCallback {
                 }
             }
         }
+    }
+
+
+    override fun setContentView(layoutResID: Int) {
+        super.setContentView(layoutResID)
+    }
+
+    override fun setContentView(view: View?) {
+        activityBaseBinding = DataBindingUtil.setContentView(this, R.layout.activity_base)
+        setDrawer()
+        activityBaseBinding?.container?.addView(view)
+    }
+
+    fun showToolbar(){
+        activityBaseBinding?.toolBar?.visibility = View.VISIBLE
+    }
+    fun hideToolbar(){
+        activityBaseBinding?.toolBar?.visibility = View.GONE
+    }
+
+    private fun setDrawer() {
+        setSupportActionBar(activityBaseBinding?.toolBar)
+        actionBarDrawerToggle =object: ActionBarDrawerToggle(this,activityBaseBinding?.drawerLayout,R.string.open,R.string.close){
+            override fun onDrawerClosed(drawerView: View) {
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+            }
+        }
+        actionBarDrawerToggle.drawerArrowDrawable.color = ContextCompat.getColor(this,R.color.white)
+        activityBaseBinding?.drawerLayout?.addDrawerListener(actionBarDrawerToggle)
+        actionBarDrawerToggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     fun addToFavoriteSong(song: Song?) = songPlayerViewModel.addFavoriteSong(song)
@@ -82,12 +124,6 @@ open class BasePlayerActivity : AppCompatActivity(),OnPlayerServiceCallback {
 
     fun pause() {
         msg = ACTION_PAUSE
-        if (mService == null) bindPlayerService()
-        else mHandler.sendEmptyMessage(msg)
-    }
-
-    fun stop() {
-        msg = ACTION_STOP
         if (mService == null) bindPlayerService()
         else mHandler.sendEmptyMessage(msg)
     }
@@ -159,5 +195,11 @@ open class BasePlayerActivity : AppCompatActivity(),OnPlayerServiceCallback {
         super.onDestroy()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
 }

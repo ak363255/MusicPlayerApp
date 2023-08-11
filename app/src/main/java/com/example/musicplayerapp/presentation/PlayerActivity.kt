@@ -28,6 +28,7 @@ class PlayerActivity : BasePlayerActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_player)
         setContentView(binding.root)
+        hideToolbar()
         onNewIntent(intent)
     }
 

@@ -10,7 +10,7 @@ import com.example.musicplayerapp.R
 import com.example.musicplayerapp.databinding.ActivityFavoriteMusicBinding
 import com.example.musicplayerapp.domain.model.Song
 
-class FavoriteMusicActivity : AppCompatActivity() {
+class FavoriteMusicActivity : BasePlayerActivity() {
     lateinit var binding:ActivityFavoriteMusicBinding
     private var songList:MutableList<Song> = mutableListOf()
     private var favoriteMusicAdapter:FavoriteMusicAdapter? = null
@@ -24,10 +24,12 @@ class FavoriteMusicActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_favorite_music)
+        setContentView(binding.root)
         favoriteMusicPlayerViewModel.getFavoriteMusicList()
         initUi()
     }
     private fun initUi(){
+        hideToolbar()
         setFavoriteMusicRecyclerView()
         setClickListeners()
         observeChanges()

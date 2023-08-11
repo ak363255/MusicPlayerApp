@@ -5,32 +5,35 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".MusicPlayerApplication"
         android:allowBackup="true"
-        android:requestLegacyExternalStorage="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/music"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/splash_screen"
         tools:targetApi="31">
         <activity
-            android:name="com.example.musicplayerapp.presentation.BasePlayerActivity"
+            android:name=".presentation.BaseActivity"
             android:exported="false" />
         <activity
-            android:name="com.example.musicplayerapp.presentation.PlayListActivity"
+            android:name=".presentation.BasePlayerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.PlayListActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.example.musicplayerapp.presentation.FavoriteMusicActivity"
+            android:name=".presentation.FavoriteMusicActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.example.musicplayerapp.presentation.PlayerActivity"
+            android:name=".presentation.PlayerActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -44,11 +47,13 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".presentation.PlayerService"
-            android:exported="false"/>
+        <service
+            android:name=".presentation.PlayerService"
+            android:exported="false" />
 
-        <receiver android:name=".presentation.PlayerNotificationManager"
-            android:enabled="true"/>
+        <receiver
+            android:name=".presentation.PlayerNotificationManager"
+            android:enabled="true" />
     </application>
 
 </manifest>
